@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>《天工开物》多维数据整合平台</title>
+    <style>
+        /* 全局样式 */
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f5f7fa;
+        }
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            grid-gap: 20px;
+        }
+        /* 新增音频提示样式 */
+        #audio-guide {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 1000;
+        }
+        #audio-guide button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        /* 模块公共样式 */
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .card h2 {
+            color: #2c3e50;
+            margin: 0 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+        }
+        /* 响应式布局 */
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 音频引导提示 -->
+    <div id="audio-guide">
+        <p>点击开始体验完整音效</p>
+        <button onclick="initAudio()">启用音频</button>
+    </div>
+
+    <h1 style="text-align: center; margin-bottom: 30px;">《天工开物》术语多维分析平台</h1>
+
+    <div class="dashboard">
+        <!-- 左侧主区域 -->
+        <div class="main-area">
+            <!-- 时间轴 -->
+            <div class="card">
+                <h2>术语时间轴</h2>
+                <div class="flourish-embed flourish-hierarchy" data-src="visualisation/22713002">
+                    <script src="https://public.flourish.studio/resources/embed.js"></script>
+                    <noscript>
+                        <img src="https://public.flourish.studio/visualisation/22713002/thumbnail" width="100%" alt="hierarchy visualization">
+                    </noscript>
+                </div>
+            </div>
+            <!-- 关系网络 -->
+            <div class="card">
+                <h2>术语多维关系网</h2>
+                <div class="flourish-embed flourish-hierarchy" data-src="visualisation/22719698">
+                    <script src="https://public.flourish.studio/resources/embed.js"></script>
+                    <noscript>
+                        <img src="https://public.flourish.studio/visualisation/22719698/thumbnail" width="100%" alt="hierarchy visualization">
+                    </noscript>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧边栏 -->
+        <div class="sidebar">
+            <!-- 地理分布 -->
+            <div class="card">
+                <h2>地理分布</h2>
+                <div class="flourish-embed flourish-network" data-src="visualisation/22717915">
+                    <script src="https://public.flourish.studio/resources/embed.js"></script>
+                    <noscript>
+                        <img src="https://public.flourish.studio/visualisation/22717915/thumbnail" width="100%" alt="network visualization">
+                    </noscript>
+                </div>
+            </div>
+            <!-- 统计摘要 -->
+            <div class="card">
+                <h2>关键统计</h2>
+                <div id="stats" style="padding: 15px;">
+                    <p>核心术语数量: <span id="term-count">55</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 音频元素 -->
+    <audio id="welcome-audio">
+        <source src="welcome.mp3" type="audio/mpeg">
+        <source src="welcome.ogg" type="audio/ogg">
+        您的浏览器不支持音频播放
+    </audio>
+
+    <audio id="bgm-audio" loop>
+        <source src="background-music.mp3" type="audio/mpeg">
+        <source src="background-music.ogg" type="audio/ogg">
+        您的浏览器不支持音频播放
+    </audio>
+
+    <script>
+        // 音频初始化函数
+        function initAudio() {
+            const guide = document.getElementById('audio-guide');
+            const welcomeAudio = document.getElementById('welcome-audio');
+            const bgmAudio = document.getElementById('bgm-audio');
+
+            guide.style.display = 'none';
+
+            welcomeAudio.play()
+                .then(() => {
+                    welcomeAudio.volume = 0.8;
+                    // 欢迎语音结束后播放背景音乐
+                    welcomeAudio.addEventListener('ended', () => {
+                        bgmAudio.volume = 0.5;
+                        bgmAudio.play();
+                    });
+                })
+                .catch(error => {
+                    console.log('音频播放失败:', error);
+                });
+        }
+
+        // 自动播放检测
+        window.addEventListener('load', () => {
+            const testAudio = new Audio();
+            testAudio.autoplay = true;
+            testAudio.volume = 0;
+            testAudio.src = 'data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU';
+
+            testAudio.play()
+                .then(() => {
+                    document.getElementById('audio-guide').style.display = 'none';
+                })
+                .catch(() => {
+                    console.log('需要用户交互才能播放音频');
+                });
+        });
+    </script>
+    <script src="https://public.flourish.studio/resources/embed.js"></script>
+</body>
+</html>
